@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SmartBandwidthManager</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    select, input, button { margin: 10px 0; width: 100%; }
+    #log { white-space: pre-wrap; background: #f0f0f0; padding: 10px; height: 200px; overflow-y: scroll; }
+    #status { margin-top: 10px; font-weight: bold; color: green; }
+  </style>
+</head>
+<body>
+  <h2>Bandwidth Control</h2>
+  <label for="app">App:</label>
+  <select id="app">
+    <option value="edge">Edge</option>
+    <option value="brave">Brave</option>
+    <option value="epic">Epic</option>
+  </select>
+
+  <label for="until">Until:</label>
+  <input type="text" id="until" placeholder="e.g. 8pm" />
+
+  <button onclick="run()">Activate</button>
+  <button onclick="cancel()">Cancel Bandwidth Control</button>
+
+  <div id="status"></div>
+
+  <h3>Logs</h3>
+  <div id="log"></div>
+
+  <script>
+    function run() {
+      const app = document.getElementById('app').value;
+      const until = document.getElementById('until').value;
+      window.api.runScript(app, until);
+      document.getElementById('status').textContent = `✅ Activated ${app} until ${until}`;
+      setTimeout(loadLog, 2000);
+    }
+
+    function cancel() {
+      const app = document.getElementById('app').value;
+      window.api.cancelScript(app);
+      document.getElementById('status').textContent = `🛑 Cancelled bandwidth control for ${app}`;
+      setTimeout(loadLog, 2000);
+    }
+
+    function loadLog() {
+      document.getElementById('log').textContent = window.api.readLog();
+    }
+
+    setInterval(loadLog, 5000);
+    window.onload = loadLog;
+  </script>
+</body>
+</html>
